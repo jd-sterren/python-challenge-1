@@ -118,7 +118,7 @@ while place_order:
                     }
                     i += 1
             # 2. Ask customer to input menu item number
-            selected_number = input("Please select a menu item number.")
+            selected_number = input("\nPlease select a menu item number.")
 
             # 3. Check if the customer typed a number
             if selected_number.isdigit() is True:
@@ -131,7 +131,7 @@ while place_order:
                     selected_item = menu_items[selected_number]
 
                     # Ask the customer for the quantity of the menu item
-                    quantity = input("How many would you like to order?")
+                    quantity = input("\nHow many would you like to order?")
 
                     # Check if the quantity is a number, default to 1 if not
                     if quantity.isdigit() is True:
@@ -141,9 +141,9 @@ while place_order:
 
                     # Add the item name, price, and quantity to the order list
                     order += [{"menu_item":selected_item["Item name"],
-                               "item_price":selected_item["Price"],
-                               "quantity":quantity}]
-
+                               "item_price":float(selected_item["Price"]),
+                               "quantity":int(quantity)}]
+                    
                     # Tell the customer that their input isn't valid
 
                 # Tell the customer they didn't select a menu option
@@ -158,7 +158,7 @@ while place_order:
 
     while True:
         # Ask the customer if they would like to order anything else
-        keep_ordering = input("Would you like to keep ordering? (Y)es or (N)o ")
+        keep_ordering = input("\nWould you like to keep ordering? (Y)es or (N)o ")
 
         # 5. Check the customer's input
         if keep_ordering.upper() == "Y":
@@ -193,16 +193,30 @@ print("--------------------------|--------|----------")
 for ordered_items in order:
     # 7. Store the dictionary items as variables
     menu_item = ordered_items["menu_item"]
-    item_price = ordered_items["item_price"]
     quantity = ordered_items["quantity"]
 
+    # Add zero fill to before decimal point if under 10
+    # While this converts the price to a string over a float, it allows
+    # for people with accounting backgrounds to keep things in line.
+    # This is done
+    if ordered_items["item_price"] < 10:
+        item_price = str(ordered_items["item_price"]).zfill(5)
+    else:
+        item_price = str(ordered_items["item_price"])
+
     # 8. Calculate the number of spaces for formatted printing
+    num_item_spaces = 26 - len(menu_item)
+    num_price_spaces = 6 - len(str(item_price))
     
     # 9. Create space strings
+    item_spaces = " " * num_item_spaces
+    price_spaces = " " * num_price_spaces
 
     # 10. Print the item name, price, and quantity
-
+    print(f"{menu_item}{item_spaces}| ${item_price}{price_spaces}| {quantity}")
 
 # 11. Calculate the cost of the order using list comprehension
 # Multiply the price by quantity for each item in the order list, then sum()
 # and print the prices.
+total_cost = round(sum(items["item_price"] * items["quantity"] for items in order),2)
+print(f'\nThe total cost of your order is ${total_cost}')
